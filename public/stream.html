@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Stream</title>
+</head>
+<body>
+  <img id="img-video">
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    (() => {
+      var socket = io();
+
+      const imgVideo = document.getElementById('img-video');
+
+      socket.on('stream', (streamImage) => {
+        imgVideo.src = streamImage;
+      })
+    })(document, io)
+  </script>
+</body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Video Call</title>
+</head>
+<body>
+  <video src="" id="video" style="width: 360px;height: 240px;" autoplay></video>
+
+  <canvas id="canvas" style="display: none;"></canvas>
+  <h1>Video Call</h1>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    window.onload = () => {
+      requestCamera();
+    }
+
+    var socket = io();
+
+    const canvas = document.getElementById('canvas');
+    const context = canvas.getContext('2d');
+    var video = document.getElementById('video');
+
+    canvas.width = 840;
+    canvas.height = 640;
+
+    context.width = canvas.width;
+    context.height = canvas.height;
+
+    const viewVideo = () => {
+      context.drawImage(video, 0, 0, context.width, context.height);
+      socket.emit('stream', canvas.toDataURL('image/webp'));
+    }
+
+    const loadCamera = (stream) => {
+      video.srcObject = new MediaStream(stream)
+      console.log('Camera Loaded')
+    }
+
+    const loadCameraFail = () => {
+      console.log('Camera Fail')
+    }
+
+    const requestCamera = () => {
+      navigator.getUserMedia = (
+        navigator.getUserMedia || 
+        navigator.webkitGetUserMedia || 
+        navigator.mozGetUserMedia || 
+        navigator.msgGetUserMedia
+      );
+
+      if (navigator.getUserMedia) {
+        navigator.getUserMedia({video: true}, loadCamera, loadCameraFail);
+
+        setInterval(() => {
+          viewVideo();
+        }, 70);
+      }
+    }
+  </script>
+</body>
+</html>
